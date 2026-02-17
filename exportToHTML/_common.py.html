@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>_common.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #66d9ef; font-style: italic;}
+.s1 { color: #f8f8f2;}
+.s2 { color: #f92672;}
+.s3 { color: #75715e;}
+.s4 { color: #e6db74;}
+.s5 { color: #ae81ff;}
+.ln { color: #f8f8f2; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#272822">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+_common.py</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">import </span><span class="s1">os</span>
+<a name="l2"><span class="ln">2    </span></a><span class="s0">import </span><span class="s1">pathlib</span>
+<a name="l3"><span class="ln">3    </span></a><span class="s0">import </span><span class="s1">tempfile</span>
+<a name="l4"><span class="ln">4    </span></a><span class="s0">import </span><span class="s1">functools</span>
+<a name="l5"><span class="ln">5    </span></a><span class="s0">import </span><span class="s1">contextlib</span>
+<a name="l6"><span class="ln">6    </span></a><span class="s0">import </span><span class="s1">types</span>
+<a name="l7"><span class="ln">7    </span></a><span class="s0">import </span><span class="s1">importlib</span>
+<a name="l8"><span class="ln">8    </span></a>
+<a name="l9"><span class="ln">9    </span></a><span class="s0">from </span><span class="s1">typing </span><span class="s0">import </span><span class="s1">Union, Optional</span>
+<a name="l10"><span class="ln">10   </span></a><span class="s0">from </span><span class="s1">.abc </span><span class="s0">import </span><span class="s1">ResourceReader, Traversable</span>
+<a name="l11"><span class="ln">11   </span></a>
+<a name="l12"><span class="ln">12   </span></a><span class="s0">from </span><span class="s1">._compat </span><span class="s0">import </span><span class="s1">wrap_spec</span>
+<a name="l13"><span class="ln">13   </span></a>
+<a name="l14"><span class="ln">14   </span></a><span class="s1">Package </span><span class="s2">= </span><span class="s1">Union[types.ModuleType, str]</span>
+<a name="l15"><span class="ln">15   </span></a>
+<a name="l16"><span class="ln">16   </span></a>
+<a name="l17"><span class="ln">17   </span></a><span class="s0">def </span><span class="s1">files(package)</span><span class="s2">:</span>
+<a name="l18"><span class="ln">18   </span></a>    <span class="s3"># type: (Package) -&gt; Traversable</span>
+<a name="l19"><span class="ln">19   </span></a>    <span class="s3">&quot;&quot;&quot; 
+<a name="l20"><span class="ln">20   </span></a>    Get a Traversable resource from a package 
+<a name="l21"><span class="ln">21   </span></a>    &quot;&quot;&quot;</span>
+<a name="l22"><span class="ln">22   </span></a>    <span class="s0">return </span><span class="s1">from_package(get_package(package))</span>
+<a name="l23"><span class="ln">23   </span></a>
+<a name="l24"><span class="ln">24   </span></a>
+<a name="l25"><span class="ln">25   </span></a><span class="s0">def </span><span class="s1">get_resource_reader(package)</span><span class="s2">:</span>
+<a name="l26"><span class="ln">26   </span></a>    <span class="s3"># type: (types.ModuleType) -&gt; Optional[ResourceReader]</span>
+<a name="l27"><span class="ln">27   </span></a>    <span class="s3">&quot;&quot;&quot; 
+<a name="l28"><span class="ln">28   </span></a>    Return the package's loader if it's a ResourceReader. 
+<a name="l29"><span class="ln">29   </span></a>    &quot;&quot;&quot;</span>
+<a name="l30"><span class="ln">30   </span></a>    <span class="s3"># We can't use</span>
+<a name="l31"><span class="ln">31   </span></a>    <span class="s3"># a issubclass() check here because apparently abc.'s __subclasscheck__()</span>
+<a name="l32"><span class="ln">32   </span></a>    <span class="s3"># hook wants to create a weak reference to the object, but</span>
+<a name="l33"><span class="ln">33   </span></a>    <span class="s3"># zipimport.zipimporter does not support weak references, resulting in a</span>
+<a name="l34"><span class="ln">34   </span></a>    <span class="s3"># TypeError.  That seems terrible.</span>
+<a name="l35"><span class="ln">35   </span></a>    <span class="s1">spec </span><span class="s2">= </span><span class="s1">package.__spec__</span>
+<a name="l36"><span class="ln">36   </span></a>    <span class="s1">reader </span><span class="s2">= </span><span class="s1">getattr(spec.loader, </span><span class="s4">'get_resource_reader'</span><span class="s1">, </span><span class="s0">None</span><span class="s1">)  </span><span class="s3"># type: ignore</span>
+<a name="l37"><span class="ln">37   </span></a>    <span class="s0">if </span><span class="s1">reader </span><span class="s0">is None</span><span class="s2">:</span>
+<a name="l38"><span class="ln">38   </span></a>        <span class="s0">return None</span>
+<a name="l39"><span class="ln">39   </span></a>    <span class="s0">return </span><span class="s1">reader(spec.name)  </span><span class="s3"># type: ignore</span>
+<a name="l40"><span class="ln">40   </span></a>
+<a name="l41"><span class="ln">41   </span></a>
+<a name="l42"><span class="ln">42   </span></a><span class="s0">def </span><span class="s1">resolve(cand)</span><span class="s2">:</span>
+<a name="l43"><span class="ln">43   </span></a>    <span class="s3"># type: (Package) -&gt; types.ModuleType</span>
+<a name="l44"><span class="ln">44   </span></a>    <span class="s0">return </span><span class="s1">cand </span><span class="s0">if </span><span class="s1">isinstance(cand, types.ModuleType) </span><span class="s0">else </span><span class="s1">importlib.import_module(cand)</span>
+<a name="l45"><span class="ln">45   </span></a>
+<a name="l46"><span class="ln">46   </span></a>
+<a name="l47"><span class="ln">47   </span></a><span class="s0">def </span><span class="s1">get_package(package)</span><span class="s2">:</span>
+<a name="l48"><span class="ln">48   </span></a>    <span class="s3"># type: (Package) -&gt; types.ModuleType</span>
+<a name="l49"><span class="ln">49   </span></a>    <span class="s3">&quot;&quot;&quot;Take a package name or module object and return the module. 
+<a name="l50"><span class="ln">50   </span></a> 
+<a name="l51"><span class="ln">51   </span></a>    Raise an exception if the resolved module is not a package. 
+<a name="l52"><span class="ln">52   </span></a>    &quot;&quot;&quot;</span>
+<a name="l53"><span class="ln">53   </span></a>    <span class="s1">resolved </span><span class="s2">= </span><span class="s1">resolve(package)</span>
+<a name="l54"><span class="ln">54   </span></a>    <span class="s0">if </span><span class="s1">wrap_spec(resolved).submodule_search_locations </span><span class="s0">is None</span><span class="s2">:</span>
+<a name="l55"><span class="ln">55   </span></a>        <span class="s0">raise </span><span class="s1">TypeError(</span><span class="s4">f'</span><span class="s5">{</span><span class="s1">package</span><span class="s5">!r} </span><span class="s4">is not a package'</span><span class="s1">)</span>
+<a name="l56"><span class="ln">56   </span></a>    <span class="s0">return </span><span class="s1">resolved</span>
+<a name="l57"><span class="ln">57   </span></a>
+<a name="l58"><span class="ln">58   </span></a>
+<a name="l59"><span class="ln">59   </span></a><span class="s0">def </span><span class="s1">from_package(package)</span><span class="s2">:</span>
+<a name="l60"><span class="ln">60   </span></a>    <span class="s3">&quot;&quot;&quot; 
+<a name="l61"><span class="ln">61   </span></a>    Return a Traversable object for the given package. 
+<a name="l62"><span class="ln">62   </span></a> 
+<a name="l63"><span class="ln">63   </span></a>    &quot;&quot;&quot;</span>
+<a name="l64"><span class="ln">64   </span></a>    <span class="s1">spec </span><span class="s2">= </span><span class="s1">wrap_spec(package)</span>
+<a name="l65"><span class="ln">65   </span></a>    <span class="s1">reader </span><span class="s2">= </span><span class="s1">spec.loader.get_resource_reader(spec.name)</span>
+<a name="l66"><span class="ln">66   </span></a>    <span class="s0">return </span><span class="s1">reader.files()</span>
+<a name="l67"><span class="ln">67   </span></a>
+<a name="l68"><span class="ln">68   </span></a>
+<a name="l69"><span class="ln">69   </span></a><span class="s2">@</span><span class="s1">contextlib.contextmanager</span>
+<a name="l70"><span class="ln">70   </span></a><span class="s0">def </span><span class="s1">_tempfile(reader, suffix</span><span class="s2">=</span><span class="s4">''</span><span class="s1">)</span><span class="s2">:</span>
+<a name="l71"><span class="ln">71   </span></a>    <span class="s3"># Not using tempfile.NamedTemporaryFile as it leads to deeper 'try'</span>
+<a name="l72"><span class="ln">72   </span></a>    <span class="s3"># blocks due to the need to close the temporary file to work on Windows</span>
+<a name="l73"><span class="ln">73   </span></a>    <span class="s3"># properly.</span>
+<a name="l74"><span class="ln">74   </span></a>    <span class="s1">fd, raw_path </span><span class="s2">= </span><span class="s1">tempfile.mkstemp(suffix</span><span class="s2">=</span><span class="s1">suffix)</span>
+<a name="l75"><span class="ln">75   </span></a>    <span class="s0">try</span><span class="s2">:</span>
+<a name="l76"><span class="ln">76   </span></a>        <span class="s0">try</span><span class="s2">:</span>
+<a name="l77"><span class="ln">77   </span></a>            <span class="s1">os.write(fd, reader())</span>
+<a name="l78"><span class="ln">78   </span></a>        <span class="s0">finally</span><span class="s2">:</span>
+<a name="l79"><span class="ln">79   </span></a>            <span class="s1">os.close(fd)</span>
+<a name="l80"><span class="ln">80   </span></a>        <span class="s0">del </span><span class="s1">reader</span>
+<a name="l81"><span class="ln">81   </span></a>        <span class="s0">yield </span><span class="s1">pathlib.Path(raw_path)</span>
+<a name="l82"><span class="ln">82   </span></a>    <span class="s0">finally</span><span class="s2">:</span>
+<a name="l83"><span class="ln">83   </span></a>        <span class="s0">try</span><span class="s2">:</span>
+<a name="l84"><span class="ln">84   </span></a>            <span class="s1">os.remove(raw_path)</span>
+<a name="l85"><span class="ln">85   </span></a>        <span class="s0">except </span><span class="s1">FileNotFoundError</span><span class="s2">:</span>
+<a name="l86"><span class="ln">86   </span></a>            <span class="s0">pass</span>
+<a name="l87"><span class="ln">87   </span></a>
+<a name="l88"><span class="ln">88   </span></a>
+<a name="l89"><span class="ln">89   </span></a><span class="s2">@</span><span class="s1">functools.singledispatch</span>
+<a name="l90"><span class="ln">90   </span></a><span class="s0">def </span><span class="s1">as_file(path)</span><span class="s2">:</span>
+<a name="l91"><span class="ln">91   </span></a>    <span class="s3">&quot;&quot;&quot; 
+<a name="l92"><span class="ln">92   </span></a>    Given a Traversable object, return that object as a 
+<a name="l93"><span class="ln">93   </span></a>    path on the local file system in a context manager. 
+<a name="l94"><span class="ln">94   </span></a>    &quot;&quot;&quot;</span>
+<a name="l95"><span class="ln">95   </span></a>    <span class="s0">return </span><span class="s1">_tempfile(path.read_bytes, suffix</span><span class="s2">=</span><span class="s1">path.name)</span>
+<a name="l96"><span class="ln">96   </span></a>
+<a name="l97"><span class="ln">97   </span></a>
+<a name="l98"><span class="ln">98   </span></a><span class="s2">@</span><span class="s1">as_file.register(pathlib.Path)</span>
+<a name="l99"><span class="ln">99   </span></a><span class="s2">@</span><span class="s1">contextlib.contextmanager</span>
+<a name="l100"><span class="ln">100  </span></a><span class="s0">def </span><span class="s1">_(path)</span><span class="s2">:</span>
+<a name="l101"><span class="ln">101  </span></a>    <span class="s3">&quot;&quot;&quot; 
+<a name="l102"><span class="ln">102  </span></a>    Degenerate behavior for pathlib.Path objects. 
+<a name="l103"><span class="ln">103  </span></a>    &quot;&quot;&quot;</span>
+<a name="l104"><span class="ln">104  </span></a>    <span class="s0">yield </span><span class="s1">path</span>
+<a name="l105"><span class="ln">105  </span></a></pre>
+</body>
+</html>

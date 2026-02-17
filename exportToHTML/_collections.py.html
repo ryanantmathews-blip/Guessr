@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>_collections.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #66d9ef; font-style: italic;}
+.s1 { color: #f8f8f2;}
+.s2 { color: #75715e;}
+.s3 { color: #f92672;}
+.ln { color: #f8f8f2; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#272822">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+_collections.py</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">import </span><span class="s1">collections</span>
+<a name="l2"><span class="ln">2    </span></a><span class="s0">import </span><span class="s1">itertools</span>
+<a name="l3"><span class="ln">3    </span></a>
+<a name="l4"><span class="ln">4    </span></a>
+<a name="l5"><span class="ln">5    </span></a><span class="s2"># from jaraco.collections 3.5.1</span>
+<a name="l6"><span class="ln">6    </span></a><span class="s0">class </span><span class="s1">DictStack(list, collections.abc.Mapping)</span><span class="s3">:</span>
+<a name="l7"><span class="ln">7    </span></a>    <span class="s2">&quot;&quot;&quot; 
+<a name="l8"><span class="ln">8    </span></a>    A stack of dictionaries that behaves as a view on those dictionaries, 
+<a name="l9"><span class="ln">9    </span></a>    giving preference to the last. 
+<a name="l10"><span class="ln">10   </span></a> 
+<a name="l11"><span class="ln">11   </span></a>    &gt;&gt;&gt; stack = DictStack([dict(a=1, c=2), dict(b=2, a=2)]) 
+<a name="l12"><span class="ln">12   </span></a>    &gt;&gt;&gt; stack['a'] 
+<a name="l13"><span class="ln">13   </span></a>    2 
+<a name="l14"><span class="ln">14   </span></a>    &gt;&gt;&gt; stack['b'] 
+<a name="l15"><span class="ln">15   </span></a>    2 
+<a name="l16"><span class="ln">16   </span></a>    &gt;&gt;&gt; stack['c'] 
+<a name="l17"><span class="ln">17   </span></a>    2 
+<a name="l18"><span class="ln">18   </span></a>    &gt;&gt;&gt; len(stack) 
+<a name="l19"><span class="ln">19   </span></a>    3 
+<a name="l20"><span class="ln">20   </span></a>    &gt;&gt;&gt; stack.push(dict(a=3)) 
+<a name="l21"><span class="ln">21   </span></a>    &gt;&gt;&gt; stack['a'] 
+<a name="l22"><span class="ln">22   </span></a>    3 
+<a name="l23"><span class="ln">23   </span></a>    &gt;&gt;&gt; set(stack.keys()) == set(['a', 'b', 'c']) 
+<a name="l24"><span class="ln">24   </span></a>    True 
+<a name="l25"><span class="ln">25   </span></a>    &gt;&gt;&gt; set(stack.items()) == set([('a', 3), ('b', 2), ('c', 2)]) 
+<a name="l26"><span class="ln">26   </span></a>    True 
+<a name="l27"><span class="ln">27   </span></a>    &gt;&gt;&gt; dict(**stack) == dict(stack) == dict(a=3, c=2, b=2) 
+<a name="l28"><span class="ln">28   </span></a>    True 
+<a name="l29"><span class="ln">29   </span></a>    &gt;&gt;&gt; d = stack.pop() 
+<a name="l30"><span class="ln">30   </span></a>    &gt;&gt;&gt; stack['a'] 
+<a name="l31"><span class="ln">31   </span></a>    2 
+<a name="l32"><span class="ln">32   </span></a>    &gt;&gt;&gt; d = stack.pop() 
+<a name="l33"><span class="ln">33   </span></a>    &gt;&gt;&gt; stack['a'] 
+<a name="l34"><span class="ln">34   </span></a>    1 
+<a name="l35"><span class="ln">35   </span></a>    &gt;&gt;&gt; stack.get('b', None) 
+<a name="l36"><span class="ln">36   </span></a>    &gt;&gt;&gt; 'c' in stack 
+<a name="l37"><span class="ln">37   </span></a>    True 
+<a name="l38"><span class="ln">38   </span></a>    &quot;&quot;&quot;</span>
+<a name="l39"><span class="ln">39   </span></a>
+<a name="l40"><span class="ln">40   </span></a>    <span class="s0">def </span><span class="s1">__iter__(self)</span><span class="s3">:</span>
+<a name="l41"><span class="ln">41   </span></a>        <span class="s1">dicts </span><span class="s3">= </span><span class="s1">list.__iter__(self)</span>
+<a name="l42"><span class="ln">42   </span></a>        <span class="s0">return </span><span class="s1">iter(set(itertools.chain.from_iterable(c.keys() </span><span class="s0">for </span><span class="s1">c </span><span class="s0">in </span><span class="s1">dicts)))</span>
+<a name="l43"><span class="ln">43   </span></a>
+<a name="l44"><span class="ln">44   </span></a>    <span class="s0">def </span><span class="s1">__getitem__(self, key)</span><span class="s3">:</span>
+<a name="l45"><span class="ln">45   </span></a>        <span class="s0">for </span><span class="s1">scope </span><span class="s0">in </span><span class="s1">reversed(tuple(list.__iter__(self)))</span><span class="s3">:</span>
+<a name="l46"><span class="ln">46   </span></a>            <span class="s0">if </span><span class="s1">key </span><span class="s0">in </span><span class="s1">scope</span><span class="s3">:</span>
+<a name="l47"><span class="ln">47   </span></a>                <span class="s0">return </span><span class="s1">scope[key]</span>
+<a name="l48"><span class="ln">48   </span></a>        <span class="s0">raise </span><span class="s1">KeyError(key)</span>
+<a name="l49"><span class="ln">49   </span></a>
+<a name="l50"><span class="ln">50   </span></a>    <span class="s1">push </span><span class="s3">= </span><span class="s1">list.append</span>
+<a name="l51"><span class="ln">51   </span></a>
+<a name="l52"><span class="ln">52   </span></a>    <span class="s0">def </span><span class="s1">__contains__(self, other)</span><span class="s3">:</span>
+<a name="l53"><span class="ln">53   </span></a>        <span class="s0">return </span><span class="s1">collections.abc.Mapping.__contains__(self, other)</span>
+<a name="l54"><span class="ln">54   </span></a>
+<a name="l55"><span class="ln">55   </span></a>    <span class="s0">def </span><span class="s1">__len__(self)</span><span class="s3">:</span>
+<a name="l56"><span class="ln">56   </span></a>        <span class="s0">return </span><span class="s1">len(list(iter(self)))</span>
+<a name="l57"><span class="ln">57   </span></a></pre>
+</body>
+</html>

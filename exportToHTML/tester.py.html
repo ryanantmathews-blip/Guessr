@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>tester.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #66d9ef; font-style: italic;}
+.s1 { color: #f8f8f2;}
+.s2 { color: #f92672;}
+.s3 { color: #e6db74;}
+.s4 { color: #75715e;}
+.s5 { color: #ae81ff;}
+.ln { color: #f8f8f2; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#272822">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+tester.py</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">import </span><span class="s1">tkinter </span><span class="s0">as </span><span class="s1">tk</span>
+<a name="l2"><span class="ln">2    </span></a><span class="s0">from </span><span class="s1">tkinter </span><span class="s0">import </span><span class="s2">*</span>
+<a name="l3"><span class="ln">3    </span></a><span class="s0">import </span><span class="s1">random</span>
+<a name="l4"><span class="ln">4    </span></a>
+<a name="l5"><span class="ln">5    </span></a><span class="s1">wbankE </span><span class="s2">= </span><span class="s1">[</span><span class="s3">&quot;WEARY&quot;</span><span class="s1">, </span><span class="s3">&quot;AUDIO&quot;</span><span class="s1">, </span><span class="s3">&quot;CHAMP&quot;</span><span class="s1">, </span><span class="s3">&quot;FRITZ&quot;</span><span class="s1">, </span><span class="s3">&quot;JUICE&quot;</span><span class="s1">]</span>
+<a name="l6"><span class="ln">6    </span></a><span class="s1">wbankH </span><span class="s2">= </span><span class="s1">[</span><span class="s3">&quot;EPOXY&quot;</span><span class="s1">, </span><span class="s3">&quot;TOXIN&quot;</span><span class="s1">, </span><span class="s3">&quot;SWOON&quot;</span><span class="s1">, </span><span class="s3">&quot;REGAL&quot;</span><span class="s1">, </span><span class="s3">&quot;NICHE&quot;</span><span class="s1">]</span>
+<a name="l7"><span class="ln">7    </span></a><span class="s1">wbankc </span><span class="s2">= </span><span class="s1">wbankH </span><span class="s2">+ </span><span class="s1">wbankE</span>
+<a name="l8"><span class="ln">8    </span></a>
+<a name="l9"><span class="ln">9    </span></a><span class="s4">#functions for i/o</span>
+<a name="l10"><span class="ln">10   </span></a><span class="s0">def </span><span class="s1">Attempt(guess)</span><span class="s2">:</span>
+<a name="l11"><span class="ln">11   </span></a>    <span class="s0">for </span><span class="s1">x </span><span class="s0">in </span><span class="s1">wbankc</span><span class="s2">:</span>
+<a name="l12"><span class="ln">12   </span></a>        <span class="s0">if </span><span class="s1">guess </span><span class="s2">== </span><span class="s1">x</span><span class="s2">:</span>
+<a name="l13"><span class="ln">13   </span></a>            <span class="s1">Wentry1.delete(</span><span class="s5">0</span><span class="s1">, </span><span class="s5">15</span><span class="s1">)</span>
+<a name="l14"><span class="ln">14   </span></a>            <span class="s1">Wentry1.insert(</span><span class="s5">1</span><span class="s1">, </span><span class="s3">f&quot; </span><span class="s5">{</span><span class="s1">guess</span><span class="s5">} </span><span class="s3">is correct&quot;</span><span class="s1">)</span>
+<a name="l15"><span class="ln">15   </span></a>            <span class="s0">break</span>
+<a name="l16"><span class="ln">16   </span></a>        <span class="s0">else</span><span class="s2">:</span>
+<a name="l17"><span class="ln">17   </span></a>            <span class="s1">Wentry1.delete(</span><span class="s5">0</span><span class="s1">,</span><span class="s5">15</span><span class="s1">)</span>
+<a name="l18"><span class="ln">18   </span></a>            <span class="s1">Wentry1.insert(</span><span class="s5">1</span><span class="s1">, </span><span class="s3">f&quot; </span><span class="s5">{</span><span class="s1">guess</span><span class="s5">} </span><span class="s3">is incorrect&quot;</span><span class="s1">)</span>
+<a name="l19"><span class="ln">19   </span></a>
+<a name="l20"><span class="ln">20   </span></a><span class="s0">def </span><span class="s1">gettext()</span><span class="s2">:</span>
+<a name="l21"><span class="ln">21   </span></a>    <span class="s1">guiin </span><span class="s2">= </span><span class="s1">str(Wentry1.get())</span>
+<a name="l22"><span class="ln">22   </span></a>    <span class="s1">ATI </span><span class="s2">= </span><span class="s1">guiin.upper()</span>
+<a name="l23"><span class="ln">23   </span></a>    <span class="s1">Attempt(ATI)</span>
+<a name="l24"><span class="ln">24   </span></a>
+<a name="l25"><span class="ln">25   </span></a><span class="s4">#make function to clear i/o from entry</span>
+<a name="l26"><span class="ln">26   </span></a><span class="s4">#window/gui</span>
+<a name="l27"><span class="ln">27   </span></a><span class="s1">window </span><span class="s2">= </span><span class="s1">tk.Tk()</span>
+<a name="l28"><span class="ln">28   </span></a><span class="s1">window.title(</span><span class="s3">&quot;BURDLE&quot;</span><span class="s1">)</span>
+<a name="l29"><span class="ln">29   </span></a><span class="s1">window.rowconfigure(</span><span class="s5">0</span><span class="s1">, weight</span><span class="s2">=</span><span class="s5">2</span><span class="s1">)</span>
+<a name="l30"><span class="ln">30   </span></a><span class="s1">window.rowconfigure(</span><span class="s5">2</span><span class="s1">)</span>
+<a name="l31"><span class="ln">31   </span></a><span class="s1">window.rowconfigure(</span><span class="s5">3</span><span class="s1">)</span>
+<a name="l32"><span class="ln">32   </span></a><span class="s1">window.columnconfigure(</span><span class="s5">0</span><span class="s1">, weight</span><span class="s2">=</span><span class="s5">2</span><span class="s1">)</span>
+<a name="l33"><span class="ln">33   </span></a><span class="s1">titlescreen </span><span class="s2">= </span><span class="s1">tk.Label(</span>
+<a name="l34"><span class="ln">34   </span></a>    <span class="s1">text </span><span class="s2">= </span><span class="s3">&quot;Burdle </span><span class="s5">\n </span><span class="s3">[not wordle;)]&quot;</span><span class="s1">,</span>
+<a name="l35"><span class="ln">35   </span></a>    <span class="s1">bg </span><span class="s2">= </span><span class="s3">&quot;green&quot;</span><span class="s1">,</span>
+<a name="l36"><span class="ln">36   </span></a>    <span class="s1">fg </span><span class="s2">= </span><span class="s3">&quot;white&quot;</span><span class="s1">,</span>
+<a name="l37"><span class="ln">37   </span></a>    <span class="s1">height</span><span class="s2">=</span><span class="s5">16</span><span class="s1">,</span>
+<a name="l38"><span class="ln">38   </span></a>    <span class="s1">width</span><span class="s2">=</span><span class="s5">48</span><span class="s1">,</span>
+<a name="l39"><span class="ln">39   </span></a>    <span class="s1">font</span><span class="s2">=</span><span class="s1">(</span><span class="s3">&quot;Helvetica&quot;</span><span class="s1">, </span><span class="s5">14</span><span class="s1">, </span><span class="s3">'bold'</span><span class="s1">)</span>
+<a name="l40"><span class="ln">40   </span></a>                      <span class="s1">)</span>
+<a name="l41"><span class="ln">41   </span></a><span class="s1">titlescreen.grid(row</span><span class="s2">= </span><span class="s5">0</span><span class="s1">, column </span><span class="s2">= </span><span class="s5">0</span><span class="s1">, sticky </span><span class="s2">= </span><span class="s3">&quot;NEWS&quot;</span><span class="s1">)</span>
+<a name="l42"><span class="ln">42   </span></a><span class="s4">#entryfield</span>
+<a name="l43"><span class="ln">43   </span></a><span class="s1">guiguess</span><span class="s2">=</span><span class="s1">tk.StringVar()</span>
+<a name="l44"><span class="ln">44   </span></a><span class="s1">Wentry1 </span><span class="s2">= </span><span class="s1">tk.Entry( textvariable </span><span class="s2">= </span><span class="s1">guiguess)</span>
+<a name="l45"><span class="ln">45   </span></a><span class="s1">Wentry1.grid(row </span><span class="s2">= </span><span class="s5">1</span><span class="s1">, column</span><span class="s2">= </span><span class="s5">0</span><span class="s1">, sticky</span><span class="s2">=</span><span class="s3">&quot;NEWS&quot;</span><span class="s1">)</span>
+<a name="l46"><span class="ln">46   </span></a><span class="s4">#button to check answer</span>
+<a name="l47"><span class="ln">47   </span></a><span class="s1">submisionguess </span><span class="s2">= </span><span class="s1">tk.Button(window,text </span><span class="s2">= </span><span class="s3">&quot;Submit&quot;</span><span class="s1">, command</span><span class="s2">= </span><span class="s1">gettext)</span>
+<a name="l48"><span class="ln">48   </span></a><span class="s1">submisionguess.grid(row</span><span class="s2">= </span><span class="s5">2</span><span class="s1">, column</span><span class="s2">= </span><span class="s5">0</span><span class="s1">, sticky</span><span class="s2">= </span><span class="s3">&quot;NEWS&quot;</span><span class="s1">)</span>
+<a name="l49"><span class="ln">49   </span></a><span class="s4">#loop runner</span>
+<a name="l50"><span class="ln">50   </span></a><span class="s1">window.mainloop()</span>
+<a name="l51"><span class="ln">51   </span></a>
+<a name="l52"><span class="ln">52   </span></a>
+<a name="l53"><span class="ln">53   </span></a>
+<a name="l54"><span class="ln">54   </span></a></pre>
+</body>
+</html>
